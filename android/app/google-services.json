@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "19627154259",
+    "project_id": "stclub-69325",
+    "storage_bucket": "stclub-69325.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:19627154259:android:871445ced84e3196c4dfa6",
+        "android_client_info": {
+          "package_name": "com.example.st_club"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "19627154259-1ltr1f9ce9k0pgfuj3fe8uckhemgsp39.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3LfiSYBsdHn1sTBpaHyxMiVZfbZXH8dk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "19627154259-1ltr1f9ce9k0pgfuj3fe8uckhemgsp39.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
