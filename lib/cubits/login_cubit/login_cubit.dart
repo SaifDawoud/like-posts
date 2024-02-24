@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,6 +15,11 @@ import 'package:st_club/models/comment_model.dart';
 import 'package:st_club/models/my_user.dart';
 import 'package:st_club/models/post_model.dart';
 
+import '../../presentation/pages/add_post_page.dart';
+import '../../presentation/pages/chat_page.dart';
+import '../../presentation/pages/home_page.dart';
+import '../../presentation/pages/settings_page.dart';
+import '../../presentation/pages/user_page.dart';
 import './login_states.dart';
 
 class LoginCubit extends Cubit<LoginStates> {
@@ -31,14 +37,18 @@ class LoginCubit extends Cubit<LoginStates> {
   }) {
     emit(LoginLoadingState());
     isLoading = true;
+
+    //FB
     FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email, password: password)
         .then((value) {
-      createUser(
+      storeUserData(
         email: email,
         uId: value.user!.uid,
         name: name,
       );
+
+      //FB
       emit(LoginSuccessState(value.user!.uid));
       isLoading = false;
     }).catchError((error) {
@@ -49,18 +59,24 @@ class LoginCubit extends Cubit<LoginStates> {
   void signIN({email, password}) {
     emit(LoginLoadingState());
     isLoading = true;
+
+    //FB
     FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: password)
         .then((value) {
       CacheHelper.saveData(key: 'uId', value: value.user!.uid);
+      //getUserData(value.user!.uid);
       emit(LoginSuccessState(value.user!.uid));
+
       isLoading = false;
     }).catchError((error) {
       emit(LoginErrorState(error: error.toString()));
     });
   }
 
-  void createUser(
+  MyUser? userModel;
+
+  void storeUserData(
       {required String email, required String name, required String uId}) {
     userModel = MyUser(
         userEmail: email,
@@ -77,14 +93,12 @@ class LoginCubit extends Cubit<LoginStates> {
         .doc(uId)
         .set(userModel!.toMap())
         .then((value) {
-      CacheHelper.saveData(key: 'uId', value: uId);
+      //CacheHelper.saveData(key: 'uId', value: uId);
       emit(CreateUserSuccessState());
     }).catchError((error) {
       emit(CreateUserErrorState(error: error.toString()));
     });
   }
-
-  MyUser? userModel;
 
   void getUserData(String? id) {
     FirebaseFirestore.instance.collection("users").doc(id).get().then((value) {
@@ -279,36 +293,29 @@ class LoginCubit extends Cubit<LoginStates> {
   }
 
   List<MyPost>? posts = [];
-  List<String>? postsId = [];
   List<String>? commentsId = [];
   List<MyComment>? comments = [];
-  List<int>? postsLikes = [];
-  List<int>? postsCommentsNo = [];
+
 
   void getPosts() {
     posts = [];
-    postsId = [];
-    postsLikes = [];
-    postsCommentsNo = [];
 
     emit(GetPostsLoadingState());
+
     FirebaseFirestore.instance.collection("posts").get().then((value) {
       value.docs.forEach((element) {
-        element.reference.collection('comments').get().then((value) {
-          postsCommentsNo!.add(value.docs.length);
-        }).catchError((error) {});
-        element.reference.collection('likes').get().then((value) {
-          postsLikes!.add(value.docs.length);
-          postsId!.add(element.id);
-          posts!.add(MyPost.fromJson(element.data()));
-          emit(GetPostsSuccessState());
-        }).catchError((error) {
-          emit(LikePostErrorState(message: error.toString()));
-        });
+        posts!.add(MyPost.fromJson(element.data()));
+        emit(GetPostsSuccessState());
       });
     }).catchError((error) {
+      print(error.toString());
       emit(GetPostsErrorState(message: error.toString()));
     });
+  }
+
+  bool checkIfLiked(String userId,MyPost? postModel){
+
+    return postModel!.postLikes!.contains(userId);
   }
 
   void getComments() {
@@ -364,5 +371,24 @@ class LoginCubit extends Cubit<LoginStates> {
     }).catchError((error) {
       emit(AddCommentErrorState(message: error.toString()));
     });
+  }
+
+  int currentIndex = 0;
+  List<Widget> pages = [
+    HomePage(),
+    ChatPage(),
+    AddPostPage(),
+    UserPage(),
+    SettingsPage()
+  ];
+  List<String> titles = const ["Feed", "Chat", "Add Post", "Users", "Settings"];
+
+  void changeNavBar(int index) {
+    if (index == 2) {
+      emit(AddPostState());
+    } else {
+      currentIndex = index;
+      emit(ChangeNavBarState());
+    }
   }
 }

@@ -15,7 +15,7 @@ void main() {
     // Build our app and trigger a frame.
     Widget? widget = const Placeholder();
     await tester.pumpWidget(MyApp(
-      staringWidget: widget,
+      startingWidget: widget,
     ));
 
     // Verify that our counter starts at 0.

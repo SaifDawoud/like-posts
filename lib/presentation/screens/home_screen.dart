@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:st_club/cubits/app_cubit/app_cubit.dart';
-import 'package:st_club/cubits/app_cubit/app_states.dart';
+import 'package:st_club/cubits/login_cubit/login_cubit.dart';
+import 'package:st_club/cubits/login_cubit/login_states.dart';
 import 'package:st_club/presentation/pages/add_post_page.dart';
+import '../../constraints.dart';
 import '../../icon_broken.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,16 +19,16 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AppCubit, AppCubitStates>(
-      listener: (BuildContext context, AppCubitStates states) {
+    LoginCubit cubit = LoginCubit.get(context)..getUserData(userConstFb!.uid)..getPosts();
+    return BlocConsumer<LoginCubit, LoginStates>(
+      listener: (BuildContext context, LoginStates states) {
         if (states is AddPostState) {
           Navigator.push(context, MaterialPageRoute(builder: (_) {
             return const AddPostPage();
           }));
         }
       },
-      builder: (BuildContext context, AppCubitStates states) {
-        AppCubit cubit = AppCubit.get(context);
+      builder: (BuildContext context, LoginStates states) {
         return Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.white,

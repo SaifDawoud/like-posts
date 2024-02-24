@@ -16,6 +16,8 @@ class RegisterScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    LoginCubit cubit=LoginCubit.get(context);
     return BlocConsumer<LoginCubit,LoginStates>(
       listener: (context, state) {
         if(state is CreateUserSuccessState){
@@ -25,7 +27,7 @@ class RegisterScreen extends StatelessWidget {
         }
       },
       builder: (context, state) {
-        LoginCubit cubit=LoginCubit.get(context);
+
         return Scaffold(
           appBar: AppBar(
             title: const Text("ST_Club"),

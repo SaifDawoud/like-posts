@@ -1,0 +1,1 @@
+ D:\\projects\\flutter\ projects\\ST_club_Likeposts\\like-posts\\.dart_tool\\flutter_build\\fb0c95e8ab682fa49b2c42fd68665064\\native_assets.yaml: 

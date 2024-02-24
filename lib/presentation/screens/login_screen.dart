@@ -16,15 +16,17 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    LoginCubit cubit = LoginCubit.get(context);
     return BlocConsumer<LoginCubit, LoginStates>(
       listener: (context, state) {
         if (state is LoginSuccessState) {
-          LoginCubit.get(context).getUserData(state.userIdFb);
+
           Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
         }
       },
       builder: (context, state) {
-        LoginCubit cubit = LoginCubit.get(context);
+
         return Scaffold(
           appBar: AppBar(
             title: const Text("ST_Club"),
@@ -57,6 +59,7 @@ class LoginScreen extends StatelessWidget {
                                 margin: const EdgeInsets.symmetric(
                                     vertical: 5, horizontal: 10),
                                 child: TextFormField(
+                                  style: TextStyle(color: Colors.black),
                                   validator: (val) {
                                     if (val == null) {
                                       return "Email Must not Be Empty";
@@ -67,6 +70,7 @@ class LoginScreen extends StatelessWidget {
                                     }
                                   },
                                   decoration: InputDecoration(
+
                                       hintText: "Enter Your Email",
                                       border: OutlineInputBorder(
                                           borderRadius:
@@ -82,6 +86,7 @@ class LoginScreen extends StatelessWidget {
                                 margin: const EdgeInsets.symmetric(
                                     vertical: 5, horizontal: 10),
                                 child: TextFormField(
+                                  style: TextStyle(color: Colors.black),
                                   validator: (val) {
                                     if (val == null) {
                                       return "password Must not Be Empty";

@@ -3,48 +3,50 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:st_club/cache_helper.dart';
-import 'package:st_club/cubits/app_cubit/app_cubit.dart';
+//import 'package:st_club/cubits/app_cubit/app_cubit.dart';
 import 'package:st_club/cubits/login_cubit/login_cubit.dart';
 import 'package:st_club/presentation/screens/register_screen.dart';
 import './presentation/screens/home_screen.dart';
 import './presentation/screens/login_screen.dart';
 import './observer.dart';
-import './constraints.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await CacheHelper.init();
-  userConstFb = FirebaseAuth.instance.currentUser;
   Bloc.observer = MyBlocObserver();
-  uId = CacheHelper.getData(key: 'uId');
   Widget widget;
-  if (uId != null) {
-    widget = const HomeScreen();
-  } else {
-    widget = LoginScreen();
-  }
+
+  FirebaseAuth.instance
+      .authStateChanges()
+      .listen((User? user) {
+    if (user == null) {
+
+    } else {
+      widget = const HomeScreen();
+    }
+  });
+
+  widget = LoginScreen();
   runApp(MyApp(
-    staringWidget: widget,
+    startingWidget: widget,
   ));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key, required this.staringWidget});
+  const MyApp({super.key,required  this.startingWidget});
 
-  final Widget staringWidget;
+  final Widget startingWidget;
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<AppCubit>(create: (BuildContext context) => AppCubit()),
+       // BlocProvider<AppCubit>(create: (BuildContext context) => AppCubit()),
         BlocProvider<LoginCubit>(create: (BuildContext context) {
-          if (uId == null) {
-            return LoginCubit()..getPosts()..getComments();
-          }else{
-            return LoginCubit()..getUserData(uId)..getPosts();
-          }
+          return LoginCubit();
+
         }),
       ],
       child: MaterialApp(
@@ -60,7 +62,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        home: staringWidget,
+        home: startingWidget,
         routes: {
           HomeScreen.routeName: (_) => const HomeScreen(),
           LoginScreen.routeName: (_) => LoginScreen(),

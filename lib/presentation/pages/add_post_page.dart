@@ -33,9 +33,9 @@ class _AddPostPageState extends State<AddPostPage> {
                 onPressed: () {
                   cubit.createPost(postText: postTextController.text);
                 },
-                child: const Text(
+                child:  Text(
                   "Post",
-                  style: TextStyle(color: Colors.white, fontSize: 20),
+                  style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 20),
                 )),
             const SizedBox(
               width: 15,
@@ -81,11 +81,13 @@ class _AddPostPageState extends State<AddPostPage> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    style: TextStyle(color: Colors.black),
                     controller: postTextController,
                     minLines: 2,
                     maxLines: 4,
                     decoration: const InputDecoration(
                       border: InputBorder.none,
+
                       hintText: "Write What is On Your Mind...",
                     ),
                   ),

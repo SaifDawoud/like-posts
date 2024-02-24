@@ -4,7 +4,7 @@ import 'package:st_club/cubits/login_cubit/login_cubit.dart';
 import 'package:st_club/presentation/widgets/comment.dart';
 import '../../cubits/login_cubit/login_states.dart';
 import '../../icon_broken.dart';
-import '../../presentation/widgets/post.dart';
+
 
 class CommentsPage extends StatelessWidget {
   final String? postId;
@@ -14,10 +14,12 @@ class CommentsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    LoginCubit cubit = LoginCubit.get(context);
     return BlocConsumer<LoginCubit, LoginStates>(
       listener: (context, state) {},
       builder: (context, state) {
-        LoginCubit cubit = LoginCubit.get(context);
+
         return Scaffold(
           appBar: AppBar(
             title: const Text("Comments"),

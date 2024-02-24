@@ -1,4 +1,11 @@
 abstract class LoginStates{}
+
+
+
+class AppInitialState extends LoginStates{}
+class ChangeNavBarState extends LoginStates{}
+class AddPostState extends LoginStates{}
+
 class LoginInitState extends LoginStates{}
 class LoginLoadingState extends LoginStates{}
 class LoginSuccessState extends LoginStates{

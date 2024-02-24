@@ -4,9 +4,6 @@ import 'package:st_club/cubits/login_cubit/login_cubit.dart';
 import 'package:st_club/cubits/login_cubit/login_states.dart';
 import 'package:st_club/models/comment_model.dart';
 
-import '../../icon_broken.dart';
-import '../../models/post_model.dart';
-
 class Comment extends StatelessWidget {
   final MyComment? commentModel;
   final String? commentId;
@@ -25,7 +22,7 @@ class Comment extends StatelessWidget {
     return BlocConsumer<LoginCubit,LoginStates>(
         listener: (context, state) {},
         builder: (context, state) {
-          LoginCubit cubit=LoginCubit.get(context);
+
           return Card(
             clipBehavior: Clip.antiAliasWithSaveLayer,
             elevation: 10,

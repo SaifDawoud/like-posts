@@ -7,10 +7,10 @@ import '../../presentation/widgets/post.dart';
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    LoginCubit cubit = LoginCubit.get(context);
     return BlocConsumer<LoginCubit, LoginStates>(
       listener: (context, state) {},
       builder: (context, state) {
-        LoginCubit cubit = LoginCubit.get(context);
         return SingleChildScrollView(
           child: Column(
             children: [
@@ -28,10 +28,8 @@ class HomePage extends StatelessWidget {
               ListView.separated(
                 shrinkWrap: true,
                 itemBuilder: (context, index) => Post(
-                    postModel: cubit.posts![index],
-                    postId: cubit.postsId![index],
-                    likesNo: cubit.postsLikes![index],
-                    commentsNo: cubit.postsCommentsNo![index]),
+                  postModel: cubit.posts![index],
+                ),
                 separatorBuilder: (context, index) => const SizedBox(
                   height: 10,
                 ),

@@ -1,33 +1,44 @@
 class MyPost {
   late final String? userName;
   late final String? userId;
+  late final String? postId;
   late final String? userProfileImage;
   late final String? postText;
   late final String? postImage;
   late final String? dateTime;
+  late List<dynamic>? postLikes = [];
+  late Map<String, dynamic>? postComments = {};
 
-  MyPost({
-    required this.userId,
-    required this.userName,
-    required this.userProfileImage,
-    required this.postText,
-    required this.dateTime,
-    this.postImage,
-  });
+  MyPost(
+      {required this.userId,
+      required this.userName,
+      this.postId,
+      required this.userProfileImage,
+      required this.postText,
+      required this.dateTime,
+      this.postLikes,
+      this.postImage,
+      this.postComments});
 
   MyPost.fromJson(Map<String, dynamic> json) {
-    userName = json['name'];
+    userName = json['userName'];
+    postLikes = json['postLikes'];
+    postComments = json['postComments'];
+    postId = json['postId'];
     postImage = json['postImage'];
     postText = json['postText'];
-    userId = json['id'];
+    userId = json['userId'];
     userProfileImage = json['userProfileImage'];
     dateTime = json['dateTime'];
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'id': userId,
-      'name': userName,
+      'postId': postId,
+      'postLikes': postLikes,
+      'postComments': postComments,
+      'userId': userId,
+      'userName': userName,
       'userProfileImage': userProfileImage,
       'postText': postText,
       'postImage': postImage,
