@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -239,17 +240,28 @@ class LoginCubit extends Cubit<LoginStates> {
 
   MyPost? post;
 
+  String _chars =
+      'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+  Random _rnd = Random();
+
+  String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
+      length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
+
   void createPost({String? postText}) {
     if (postImage == null) {
       post = MyPost(
           userId: userModel!.userId,
+          postId: getRandomString(20),
           userName: userModel!.userName,
           userProfileImage: userModel!.userProfileImage,
           postText: postText,
+          postComments: {},
+          postLikes: [],
           dateTime: DateFormat.yMEd().add_jms().format(DateTime.now()));
       FirebaseFirestore.instance
           .collection("posts")
-          .add(post!.toMap())
+          .doc(post!.postId)
+          .set(post!.toMap())
           .then((value) {
         emit(CreatePostSuccessState());
         getPosts();
@@ -296,7 +308,6 @@ class LoginCubit extends Cubit<LoginStates> {
   List<String>? commentsId = [];
   List<MyComment>? comments = [];
 
-
   void getPosts() {
     posts = [];
 
@@ -313,18 +324,17 @@ class LoginCubit extends Cubit<LoginStates> {
     });
   }
 
-  bool checkIfLiked(String userId,MyPost? postModel){
-
+  bool checkIfLiked(String userId, MyPost? postModel) {
     return postModel!.postLikes!.contains(userId);
   }
 
-  void getComments() {
+  void getComments({MyPost? post}) {
     comments = [];
     commentsId = [];
     emit(GetCommentsLoadingState());
     FirebaseFirestore.instance
         .collection("posts")
-        .doc()
+        .doc(post!.postId)
         .collection('comments')
         .get()
         .then((value) {
@@ -339,22 +349,35 @@ class LoginCubit extends Cubit<LoginStates> {
     });
   }
 
-  void likePost(String? postId) {
-    FirebaseFirestore.instance
-        .collection('posts')
-        .doc(postId)
-        .collection('likes')
-        .doc(userModel!.userId)
-        .set({'like': true}).then((value) {
-      emit(LikePostSuccessState());
-    }).catchError((error) {
-      emit(LikePostErrorState(message: error.toString()));
-    });
+  void likePost(MyPost? post) {
+    if (!post!.postLikes!.contains(userModel!.userId)) {
+      post.postLikes!.add(userModel!.userId);
+      FirebaseFirestore.instance
+          .collection('posts')
+          .doc(post.postId)
+          .update(post.toMap())
+          .then((value) {
+        emit(LikePostSuccessState());
+      }).catchError((error) {
+        emit(LikePostErrorState(message: error.toString()));
+      });
+    } else {
+      post.postLikes!.remove(userModel!.userId);
+      FirebaseFirestore.instance
+          .collection('posts')
+          .doc(post.postId)
+          .update(post.toMap())
+          .then((value) {
+        emit(LikePostSuccessState());
+      }).catchError((error) {
+        emit(LikePostErrorState(message: error.toString()));
+      });
+    }
   }
 
   MyComment? commentModel;
 
-  void addComment({String? postId, String? comment}) {
+  void addComment({MyPost? post, String? comment}) {
     commentModel = MyComment(
         userId: userModel!.userId,
         userName: userModel!.userName,
@@ -362,7 +385,7 @@ class LoginCubit extends Cubit<LoginStates> {
         commentText: comment);
     FirebaseFirestore.instance
         .collection('posts')
-        .doc(postId)
+        .doc(post!.postId)
         .collection('comments')
         .doc(userModel!.userId)
         .set(commentModel!.toMap())

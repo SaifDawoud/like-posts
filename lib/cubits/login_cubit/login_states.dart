@@ -136,7 +136,7 @@ class AddCommentErrorState extends LoginStates{
   AddCommentErrorState({this.message});
 }
 class GetCommentsSuccessState extends LoginStates{}
-class AddcommentPageStat extends LoginStates{}
+class AddCommentPageState extends LoginStates{}
 
 class GetCommentsLoadingState extends LoginStates{}
 class GetCommentsErrorState extends LoginStates{

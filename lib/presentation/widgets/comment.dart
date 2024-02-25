@@ -83,7 +83,12 @@ class Comment extends StatelessWidget {
                       height: 10,
                     ),
 
+                    Text(
+                      "${commentModel!.commentText}",
+                      style: const TextStyle(
 
+                          fontSize: 14),
+                    ),
 
                   ],
                 ),

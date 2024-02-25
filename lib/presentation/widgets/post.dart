@@ -27,8 +27,8 @@ class Post extends StatelessWidget {
   Widget build(BuildContext context) {
     LoginCubit cubit = LoginCubit.get(context);
     return BlocConsumer<LoginCubit, LoginStates>(listener: (context, state) {
-      if (state is AddcommentPageStat) {
-        cubit.getComments();
+      if (state is AddCommentPageState) {
+        cubit.getComments(post:postModel);
       }
     }, builder: (context, state) {
       return Card(
@@ -208,24 +208,25 @@ class Post extends StatelessWidget {
                       CircleAvatar(
                           radius: 20,
                           backgroundImage: NetworkImage(
-                              "${cubit!.userModel!.userProfileImage}")),
+                              "${cubit.userModel!.userProfileImage}")),
                       const SizedBox(
                         width: 15,
                       ),
                       Expanded(
                           child: InkWell(
                         onTap: () {
-                          state = AddcommentPageStat();
+                          cubit.getComments(post: postModel);
+                          //state = AddCommentPageState();
                           Navigator.of(context)
                               .push(MaterialPageRoute(builder: (context) {
-                            return CommentsPage(postId: postModel!.postId);
+                            return CommentsPage(post: postModel);
                           }));
                         },
                         child: Text('Write a Comment...'),
                       )),
                       InkWell(
                         onTap: () {
-                          cubit.likePost(postModel!.postId);
+                          cubit.likePost(postModel);
                         },
                         child: Row(
                           children: [
