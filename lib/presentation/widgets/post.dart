@@ -191,7 +191,7 @@ class Post extends StatelessWidget {
                                 width: 5,
                               ),
                               //${postModel!.postComments}
-                              Text("0")
+                              Text("${postModel!.postComments}")
                             ],
                           )),
                     ],

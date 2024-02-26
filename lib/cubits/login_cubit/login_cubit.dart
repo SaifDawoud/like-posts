@@ -240,12 +240,14 @@ class LoginCubit extends Cubit<LoginStates> {
 
   MyPost? post;
 
-  String _chars =
+  final String _chars =
       'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
   Random _rnd = Random();
 
-  String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
-      length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
+  String getRandomString(int length) => String.fromCharCodes(
+      Iterable.generate(
+      length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))
+      ));
 
   void createPost({String? postText}) {
     if (postImage == null) {
@@ -255,7 +257,7 @@ class LoginCubit extends Cubit<LoginStates> {
           userName: userModel!.userName,
           userProfileImage: userModel!.userProfileImage,
           postText: postText,
-          postComments: {},
+          postComments: 0,
           postLikes: [],
           dateTime: DateFormat.yMEd().add_jms().format(DateTime.now()));
       FirebaseFirestore.instance
@@ -285,6 +287,8 @@ class LoginCubit extends Cubit<LoginStates> {
               userName: userModel!.userName,
               userProfileImage: userModel!.userProfileImage,
               postText: postText,
+              postComments: 0,
+              postLikes: [],
               postImage: imageLink,
               dateTime: DateFormat.yMEd().add_jms().format(DateTime.now()));
           FirebaseFirestore.instance
@@ -342,8 +346,9 @@ class LoginCubit extends Cubit<LoginStates> {
         commentsId!.add(element.id);
         print(MyComment.fromJson(element.data()));
         comments!.add(MyComment.fromJson(element.data()));
-        emit(GetCommentsSuccessState());
+
       });
+      emit(GetCommentsSuccessState());
     }).catchError((error) {
       emit(GetCommentsErrorState(message: error.toString()));
     });
@@ -378,21 +383,29 @@ class LoginCubit extends Cubit<LoginStates> {
   MyComment? commentModel;
 
   void addComment({MyPost? post, String? comment}) {
-    commentModel = MyComment(
-        userId: userModel!.userId,
-        userName: userModel!.userName,
-        userProfileImage: userModel!.userProfileImage,
-        commentText: comment);
+    post!.postComments++;
+    print(post.postComments);
     FirebaseFirestore.instance
         .collection('posts')
-        .doc(post!.postId)
-        .collection('comments')
-        .doc(userModel!.userId)
-        .set(commentModel!.toMap())
+        .doc(post.postId)
+        .update(post.toMap())
         .then((value) {
-      emit(AddCommentSuccessState());
-    }).catchError((error) {
-      emit(AddCommentErrorState(message: error.toString()));
+      commentModel = MyComment(
+          userId: userModel!.userId,
+          userName: userModel!.userName,
+          userProfileImage: userModel!.userProfileImage,
+          commentText: comment);
+      FirebaseFirestore.instance
+          .collection('posts')
+          .doc(post.postId)
+          .collection('comments')
+          .doc()
+          .set(commentModel!.toMap())
+          .then((value) {
+        emit(AddCommentSuccessState());
+      }).catchError((error) {
+        emit(AddCommentErrorState(message: error.toString()));
+      });
     });
   }
 

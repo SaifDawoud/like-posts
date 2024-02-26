@@ -6,8 +6,9 @@ class MyPost {
   late final String? postText;
   late final String? postImage;
   late final String? dateTime;
-  late List<dynamic>? postLikes = [];
-  late Map<String, dynamic>? postComments = {};
+  late List<dynamic>? postLikes ;
+  //late Map<String, dynamic>? postComments = {};
+  late int postComments ;
 
   MyPost(
       {required this.userId,
@@ -18,7 +19,7 @@ class MyPost {
       required this.dateTime,
       this.postLikes,
       this.postImage,
-      this.postComments});
+      required this.postComments});
 
   MyPost.fromJson(Map<String, dynamic> json) {
     userName = json['userName'];
