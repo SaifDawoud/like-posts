@@ -16,11 +16,12 @@ import 'package:st_club/models/comment_model.dart';
 import 'package:st_club/models/my_user.dart';
 import 'package:st_club/models/post_model.dart';
 
+import '../../models/message_model.dart';
 import '../../presentation/pages/add_post_page.dart';
 import '../../presentation/pages/chat_page.dart';
 import '../../presentation/pages/home_page.dart';
 import '../../presentation/pages/settings_page.dart';
-import '../../presentation/pages/user_page.dart';
+import '../../presentation/pages/users_page.dart';
 import './login_states.dart';
 
 class LoginCubit extends Cubit<LoginStates> {
@@ -43,7 +44,7 @@ class LoginCubit extends Cubit<LoginStates> {
     FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email, password: password)
         .then((value) {
-      storeUserData(
+       storeUserData(
         email: email,
         uId: value.user!.uid,
         name: name,
@@ -77,7 +78,7 @@ class LoginCubit extends Cubit<LoginStates> {
 
   MyUser? userModel;
 
-  void storeUserData(
+   storeUserData(
       {required String email, required String name, required String uId}) {
     userModel = MyUser(
         userEmail: email,
@@ -104,17 +105,27 @@ class LoginCubit extends Cubit<LoginStates> {
   void getUserData(String? id) {
     FirebaseFirestore.instance.collection("users").doc(id).get().then((value) {
       userModel = MyUser.fromJson(value.data()!);
-      debugPrint("*************${userModel!.userId}");
-      debugPrint(userModel!.userEmail);
-      debugPrint(userModel!.userName);
-
       emit(GetUserSuccess());
     }).catchError((error) {
-      debugPrint(error.toString());
-
       emit(GetUserError(
         message: error.toString(),
       ));
+    });
+  }
+
+  List<MyUser> allUsers = [];
+
+  void getAllUsers() {
+    allUsers = [];
+    FirebaseFirestore.instance.collection("users").get().then((value) {
+      value.docs.forEach((element) {
+        if (element.id != userModel!.userId) {
+          allUsers.add(MyUser.fromJson(element.data()!));
+        }
+      });
+      emit(GetAllUsersSuccess());
+    }).catchError((error) {
+      emit(GetAllUsersErrorState(message: error.toString()));
     });
   }
 
@@ -244,10 +255,8 @@ class LoginCubit extends Cubit<LoginStates> {
       'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
   Random _rnd = Random();
 
-  String getRandomString(int length) => String.fromCharCodes(
-      Iterable.generate(
-      length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))
-      ));
+  String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
+      length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
 
   void createPost({String? postText}) {
     if (postImage == null) {
@@ -346,7 +355,6 @@ class LoginCubit extends Cubit<LoginStates> {
         commentsId!.add(element.id);
         print(MyComment.fromJson(element.data()));
         comments!.add(MyComment.fromJson(element.data()));
-
       });
       emit(GetCommentsSuccessState());
     }).catchError((error) {
@@ -422,9 +430,18 @@ class LoginCubit extends Cubit<LoginStates> {
   void changeNavBar(int index) {
     if (index == 2) {
       emit(AddPostState());
+    } else if (index == 3) {
+      emit(GetAllUsersLoading());
+      currentIndex = index;
+      emit(ChangeNavBarState());
     } else {
       currentIndex = index;
       emit(ChangeNavBarState());
     }
   }
+  //
+  // Stream<QuerySnapshot> messageStream(String userId) {
+  //   Stream<QuerySnapshot> myMessageStream =
+  //   return myMessageStream;
+  // }
 }

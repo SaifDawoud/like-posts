@@ -45,12 +45,14 @@ class RegisterScreen extends StatelessWidget {
                         margin:const EdgeInsets.symmetric(vertical: 30, horizontal: 10),
                         child: const Text('Register',
                             style: TextStyle(
+
                                 fontSize: 18, fontWeight: FontWeight.bold))),
                     const SizedBox(height: 60),
                     Column(crossAxisAlignment: CrossAxisAlignment.center,children: [
                       Container(
                         margin:const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                         child: TextFormField(
+                          style: TextStyle(color: Colors.black ),
                           validator: (val) {
                             if (val == null) {
                               return "Name Must not Be Empty";
@@ -70,6 +72,7 @@ class RegisterScreen extends StatelessWidget {
                       Container(
                         margin:const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                         child: TextFormField(
+                          style: TextStyle(color: Colors.black ),
                           validator: (val) {
                             if (val == null) {
                               return "Email Must not Be Empty";
@@ -93,6 +96,7 @@ class RegisterScreen extends StatelessWidget {
                       Container(
                         margin:const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                         child: TextFormField(
+                          style: TextStyle(color: Colors.black ),
                           validator: (val) {
                             if (val == null) {
                               return "password Must not Be Empty";
@@ -120,7 +124,7 @@ class RegisterScreen extends StatelessWidget {
 
                             }
                           },
-                          child:const Text("Login")),],),
+                          child:const Text("register")),],),
                     const SizedBox(height: 40,),
                     Row(
                       children: [

@@ -44,7 +44,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               },
               child: const Text(
                 "Update",
-                style: TextStyle(color: Colors.white, fontSize: 20),
+                style: TextStyle(color: Colors.blueAccent, fontSize: 20),
               )),
           const SizedBox(
             width: 15,

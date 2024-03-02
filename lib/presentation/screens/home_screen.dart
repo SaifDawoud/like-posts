@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:st_club/cubits/login_cubit/login_cubit.dart';
 import 'package:st_club/cubits/login_cubit/login_states.dart';
 import 'package:st_club/presentation/pages/add_post_page.dart';
-import '../../constraints.dart';
+import '../../constants.dart';
 import '../../icon_broken.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -26,6 +26,9 @@ class _HomeScreenState extends State<HomeScreen> {
           Navigator.push(context, MaterialPageRoute(builder: (_) {
             return const AddPostPage();
           }));
+        }
+        if(states is GetAllUsersLoading){
+          cubit.getAllUsers();
         }
       },
       builder: (BuildContext context, LoginStates states) {
@@ -78,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(IconBroken.User),
-                  label: "User",
+                  label: "Users",
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(IconBroken.Setting),

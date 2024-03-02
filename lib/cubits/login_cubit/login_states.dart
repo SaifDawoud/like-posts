@@ -144,3 +144,10 @@ class GetCommentsErrorState extends LoginStates{
 
   GetCommentsErrorState({this.message});
 }
+class GetAllUsersSuccess extends LoginStates{}
+class GetAllUsersLoading extends LoginStates{}
+class GetAllUsersErrorState extends LoginStates{
+  final String? message;
+
+  GetAllUsersErrorState({this.message});
+}
