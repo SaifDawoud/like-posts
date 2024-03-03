@@ -15,41 +15,30 @@ class ChatRoom extends StatelessWidget {
   Widget build(BuildContext context) {
     LoginCubit cubit = LoginCubit.get(context);
 
-    TextEditingController messageController = TextEditingController();
     return Scaffold(
       appBar: AppBar(),
       body: Column(
         children: [
           StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection("users")
-                  .doc(cubit.userModel!.userId)
-                  .collection("messages")
-                  .doc(userId)
-                  .collection("messages")
-                  .orderBy("sentAt")
-                  .snapshots()
-              ,
+              stream: cubit.messageStream(userId),
               builder: (context, snapshot) {
-                final messagesModellist = [];
+                final messagesModelList = [];
 
                 if (snapshot.hasData) {
-                  final messageslist = snapshot.data!.docs.reversed
+                  final messagesList = snapshot.data!.docs.reversed
                       as Iterable<QueryDocumentSnapshot<Map<String, dynamic>>>;
 
-                  for (var message in messageslist) {
-                    messagesModellist.add(Message.fromJson(message.data()));
+                  for (var message in messagesList) {
+                    messagesModelList.add(Message.fromJson(message.data()));
                   }
-
-
                 }
                 return Expanded(
                   child: ListView.builder(
                       reverse: true,
                       itemBuilder: (context, index) {
-                        return MessageBubble(message: messagesModellist[index]);
+                        return MessageBubble(message: messagesModelList[index]);
                       },
-                      itemCount: messagesModellist.length),
+                      itemCount: messagesModelList.length),
                 );
               }),
           Padding(
@@ -58,7 +47,7 @@ class ChatRoom extends StatelessWidget {
               children: [
                 Expanded(
                   child: TextFormField(
-                    style: TextStyle(color: Colors.black),
+                    style: const TextStyle(color: Colors.black),
                     validator: (val) {
                       if (val == null) {
                         return "Message Must not Be Empty";
@@ -70,29 +59,13 @@ class ChatRoom extends StatelessWidget {
                         hintText: "Type A Message...",
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15))),
-                    controller: messageController,
+                    controller: cubit.messageController,
                   ),
                 ),
                 IconButton(
                     onPressed: () {
-                      Message tobeSentMessage = Message(
-                          messageText: messageController.text,
-                          sender: cubit.userModel!.userId,
-                          sentAt: Timestamp.now());
-
-                      FirebaseFirestore.instance
-                          .collection("users")
-                          .doc(cubit.userModel!.userId)
-                          .collection("messages")
-                          .doc(userId).collection("messages")
-                          .add(tobeSentMessage.toMap());
-                      FirebaseFirestore.instance
-                          .collection("users")
-                          .doc(userId)
-                          .collection("messages")
-                          .doc(cubit.userModel!.userId).collection("messages")
-                          .add(tobeSentMessage.toMap());
-                      messageController.clear();
+                      cubit.sendMessage(userId);
+                      cubit.messageController.clear();
                     },
                     icon: const Icon(IconBroken.Send))
               ],

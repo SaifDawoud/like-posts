@@ -1,5 +1,5 @@
 class MyUser {
-  late final String? userName;
+  late final String userName;
   late final String? userEmail;
   late final String? userId;
   late final String? userImage;

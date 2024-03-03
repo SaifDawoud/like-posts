@@ -1,7 +1,7 @@
-#Sat Mar 02 12:49:28 EET 2024
-base.0=D\:\\projects\\flutter projects\\ST_club_Likeposts\\like-posts\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
-base.1=D\:\\projects\\flutter projects\\ST_club_Likeposts\\like-posts\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes2.dex
-base.2=D\:\\projects\\flutter projects\\ST_club_Likeposts\\like-posts\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes3.dex
+#Sun Mar 03 14:15:52 EET 2024
+base.0=C\:\\Users\\TCI\\projects\\stclub\\like-posts\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
+base.1=C\:\\Users\\TCI\\projects\\stclub\\like-posts\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes2.dex
+base.2=C\:\\Users\\TCI\\projects\\stclub\\like-posts\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes3.dex
 path.0=classes.dex
 path.1=classes2.dex
 path.2=classes3.dex

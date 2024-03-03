@@ -4,8 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:st_club/cubits/login_cubit/login_cubit.dart';
 import 'package:st_club/cubits/login_cubit/login_states.dart';
 import 'package:st_club/presentation/pages/add_post_page.dart';
+import 'package:st_club/presentation/widgets/UsersCard.dart';
 import '../../constants.dart';
 import '../../icon_broken.dart';
+import '../../models/my_user.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String routeName = "Home_screen";
@@ -19,7 +21,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    LoginCubit cubit = LoginCubit.get(context)..getUserData(userConstFb!.uid)..getPosts();
+    LoginCubit cubit = LoginCubit.get(context)
+      ..getUserData(userConstFb!.uid)
+      ..getPosts();
     return BlocConsumer<LoginCubit, LoginStates>(
       listener: (BuildContext context, LoginStates states) {
         if (states is AddPostState) {
@@ -27,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
             return const AddPostPage();
           }));
         }
-        if(states is GetAllUsersLoading){
+        if (states is GetAllUsersLoading) {
           cubit.getAllUsers();
         }
       },
@@ -47,13 +51,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: const Icon(IconBroken.Notification, color: Colors.black),
                 onPressed: () {},
               ),
-              IconButton(
-                icon: const Icon(
-                  IconBroken.Search,
-                  color: Colors.black,
-                ),
-                onPressed: () {},
-              )
+              cubit.currentIndex == 3
+                  ? IconButton(
+                      icon: const Icon(
+                        IconBroken.Search,
+                        color: Colors.black,
+                      ),
+                      onPressed: () {
+                        showSearch(
+                            context: context,
+                            delegate:
+                                CustomSearchDelegate(users: cubit.allUsers));
+                      },
+                    )
+                  : Container()
             ],
           ),
           body: cubit.pages[cubit.currentIndex],
@@ -88,6 +99,74 @@ class _HomeScreenState extends State<HomeScreen> {
                   label: "Settings",
                 )
               ]),
+        );
+      },
+    );
+  }
+}
+
+class CustomSearchDelegate extends SearchDelegate {
+  late List<MyUser> users = [];
+
+  CustomSearchDelegate({required this.users});
+
+  @override
+  List<Widget>? buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: const Icon(Icons.clear),
+        onPressed: () {
+          query = "";
+        },
+      )
+    ];
+  }
+
+  @override
+  Widget? buildLeading(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, null);
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    List<MyUser> matchQuery = [];
+    for (var user in users) {
+      if (user.userName.toLowerCase().contains(query.toLowerCase())) {
+        matchQuery.add(user);
+      }
+    }
+
+    return ListView.builder(
+      itemCount: matchQuery.length,
+      itemBuilder: (context, index) {
+        var result = matchQuery[index];
+        return UsersCard(
+          user: result,
+        );
+      },
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    List matchQuery = [];
+    for (var user in users) {
+      if (user.userName.toLowerCase().contains(query.toLowerCase())) {
+        matchQuery.add(user);
+      }
+    }
+
+    return ListView.builder(
+      itemCount: matchQuery.length,
+      itemBuilder: (context, index) {
+        var result = matchQuery[index];
+        return UsersCard(
+          user: result,
         );
       },
     );

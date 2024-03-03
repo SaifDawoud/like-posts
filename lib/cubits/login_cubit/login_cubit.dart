@@ -439,9 +439,39 @@ class LoginCubit extends Cubit<LoginStates> {
       emit(ChangeNavBarState());
     }
   }
-  //
-  // Stream<QuerySnapshot> messageStream(String userId) {
-  //   Stream<QuerySnapshot> myMessageStream =
-  //   return myMessageStream;
-  // }
+  TextEditingController messageController = TextEditingController();
+  void sendMessage(String? userId){
+
+    Message tobeSentMessage = Message(
+        messageText: messageController.text,
+        sender: userModel!.userId,
+        sentAt: Timestamp.now());
+
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(userModel!.userId)
+        .collection("messages")
+        .doc(userId).collection("messages")
+        .add(tobeSentMessage.toMap());
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(userId)
+        .collection("messages")
+        .doc(userModel!.userId).collection("messages")
+        .add(tobeSentMessage.toMap());
+  }
+
+
+
+  Stream<QuerySnapshot> messageStream(String? userId) {
+    Stream<QuerySnapshot> myMessageStream =FirebaseFirestore.instance
+        .collection("users")
+        .doc(userModel!.userId)
+        .collection("messages")
+        .doc(userId)
+        .collection("messages")
+        .orderBy("sentAt")
+        .snapshots();
+    return myMessageStream;
+  }
 }

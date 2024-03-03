@@ -1,0 +1,1 @@
+ C:\\Users\\TCI\\projects\\stclub\\like-posts\\.dart_tool\\flutter_build\\81f56b0cc58f5b4edfb7682dec795155\\native_assets.yaml: 
