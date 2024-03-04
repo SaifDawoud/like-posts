@@ -1,3 +1,5 @@
+import 'message_model.dart';
+
 class MyUser {
   late final String userName;
   late final String? userEmail;
@@ -5,6 +7,7 @@ class MyUser {
   late final String? userImage;
   late final String? userProfileImage;
   late final String? bio;
+  late final Message? lastMessage;
 
   MyUser(
       {required this.userEmail,
@@ -16,6 +19,7 @@ class MyUser {
 
   MyUser.fromJson(Map<String, dynamic> json) {
     userName = json['name'];
+    lastMessage = Message.fromJson(json['lastMessage']);
     bio = json['bio'];
     userId = json['id'];
     userEmail = json['email'];
@@ -26,7 +30,8 @@ class MyUser {
   Map<String, dynamic> toMap() {
     return {
       'id': userId,
-      'bio':bio,
+      'lastMessage': lastMessage!.toMap(),
+      'bio': bio,
       'name': userName,
       'email': userEmail,
       'userImage': userImage,

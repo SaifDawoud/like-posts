@@ -84,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(IconBroken.Chat),
-                  label: "Chat",
+                  label: "Chats",
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(IconBroken.Paper_Upload),

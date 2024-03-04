@@ -22,23 +22,23 @@ class ChatRoom extends StatelessWidget {
           StreamBuilder<QuerySnapshot>(
               stream: cubit.messageStream(userId),
               builder: (context, snapshot) {
-                final messagesModelList = [];
+
 
                 if (snapshot.hasData) {
                   final messagesList = snapshot.data!.docs.reversed
                       as Iterable<QueryDocumentSnapshot<Map<String, dynamic>>>;
 
                   for (var message in messagesList) {
-                    messagesModelList.add(Message.fromJson(message.data()));
+                    cubit.messagesModelList.add(Message.fromJson(message.data()));
                   }
                 }
                 return Expanded(
                   child: ListView.builder(
                       reverse: true,
                       itemBuilder: (context, index) {
-                        return MessageBubble(message: messagesModelList[index]);
+                        return MessageBubble(message: cubit.messagesModelList[index]);
                       },
-                      itemCount: messagesModelList.length),
+                      itemCount: cubit.messagesModelList.length),
                 );
               }),
           Padding(

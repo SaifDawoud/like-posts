@@ -44,7 +44,7 @@ class LoginCubit extends Cubit<LoginStates> {
     FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email, password: password)
         .then((value) {
-       storeUserData(
+      storeUserData(
         email: email,
         uId: value.user!.uid,
         name: name,
@@ -78,7 +78,7 @@ class LoginCubit extends Cubit<LoginStates> {
 
   MyUser? userModel;
 
-   storeUserData(
+  storeUserData(
       {required String email, required String name, required String uId}) {
     userModel = MyUser(
         userEmail: email,
@@ -425,10 +425,20 @@ class LoginCubit extends Cubit<LoginStates> {
     UserPage(),
     SettingsPage()
   ];
-  List<String> titles = const ["Feed", "Chat", "Add Post", "Users", "Settings"];
+  List<String> titles = const [
+    "Feed",
+    "Chats",
+    "Add Post",
+    "Users",
+    "Settings"
+  ];
 
   void changeNavBar(int index) {
-    if (index == 2) {
+    if (index == 1) {
+      emit(GetAllUsersLoading());
+      currentIndex = index;
+      emit(ChangeNavBarState());
+    } else if (index == 2) {
       emit(AddPostState());
     } else if (index == 3) {
       emit(GetAllUsersLoading());
@@ -439,9 +449,10 @@ class LoginCubit extends Cubit<LoginStates> {
       emit(ChangeNavBarState());
     }
   }
-  TextEditingController messageController = TextEditingController();
-  void sendMessage(String? userId){
 
+  TextEditingController messageController = TextEditingController();
+
+  void sendMessage(String? userId) {
     Message tobeSentMessage = Message(
         messageText: messageController.text,
         sender: userModel!.userId,
@@ -451,20 +462,34 @@ class LoginCubit extends Cubit<LoginStates> {
         .collection("users")
         .doc(userModel!.userId)
         .collection("messages")
-        .doc(userId).collection("messages")
+        .doc(userId)
+        .collection("messages")
         .add(tobeSentMessage.toMap());
     FirebaseFirestore.instance
         .collection("users")
         .doc(userId)
         .collection("messages")
-        .doc(userModel!.userId).collection("messages")
+        .doc(userModel!.userId)
+        .collection("messages")
         .add(tobeSentMessage.toMap());
+
+    //edit the last message
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(userModel!.userId)
+        .update({"lastMessage": tobeSentMessage.toMap()});
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(userId)
+        .update({"lastMessage": tobeSentMessage.toMap()});
+    getAllUsers();
+    print(userModel!.lastMessage!.sentAt);
   }
 
-
+  List<Message> messagesModelList = [];
 
   Stream<QuerySnapshot> messageStream(String? userId) {
-    Stream<QuerySnapshot> myMessageStream =FirebaseFirestore.instance
+    Stream<QuerySnapshot> myMessageStream = FirebaseFirestore.instance
         .collection("users")
         .doc(userModel!.userId)
         .collection("messages")
